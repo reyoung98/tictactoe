@@ -84,6 +84,7 @@ const displayWin = () => {
     alert.prepend(p);
 }
 
+// hover effects
 const addHover = (e) => {
     player === "X" ? e.target.classList.add("hover-x") : e.target.classList.add("hover-o");
 }
@@ -92,6 +93,7 @@ const removeHover = (e) => {
     player === "X" ? e.target.classList.remove("hover-x") : e.target.classList.remove("hover-o");
 }
 
+// the game
 for (let arraySquare of arraySquares) {
     arraySquare.addEventListener('mouseenter', addHover)
     arraySquare.addEventListener('mouseleave', removeHover)
@@ -107,6 +109,7 @@ for (let arraySquare of arraySquares) {
                 // remove hover effect for boxes already selected
                 if (arraySquare.classList.contains("selected-x") || arraySquare.classList.contains("selected-o")) {
                     arraySquare.removeEventListener('mouseenter', addHover)
+                    arraySquare.removeEventListener('mouseleave', removeHover)
                 }
 
                 // change array to reflect status of game
@@ -161,9 +164,6 @@ replayBtn.addEventListener('click', () => {
     }
 })
 
-// play until win mode
-let countX = 0;
-let countO = 0;
 
 
 

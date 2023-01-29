@@ -36,18 +36,10 @@ h1 {
   align-items: center;
   height: 200px;
   width: 200px;
-  background-color: #70a0af;
+  background-color: #eceff4;
   margin: 1rem;
   font-size: 4rem;
   border-radius: 3px;
-}
-
-.selected-x {
-  background-color: #706993;
-}
-
-.selected-o {
-  background-color: #ff686b;
 }
 
 .alert {
@@ -72,12 +64,21 @@ h1 {
 }
 
 .hover-x {
-  background-color: #706993;
+  background-color: #706993aa;
 }
 
 .hover-o {
+  background-color: #ff686baa;
+}
+
+.selected-x {
+  background-color: #706993;
+}
+
+.selected-o {
   background-color: #ff686b;
 }
+
 
 .selects {
   display: flex;
