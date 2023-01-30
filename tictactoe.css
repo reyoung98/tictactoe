@@ -40,6 +40,36 @@ h1 {
   margin: 1rem;
   font-size: 4rem;
   border-radius: 3px;
+  cursor: pointer;
+}
+
+.selects {
+  display: flex;
+  flex-direction: column;
+  max-width: 200px;
+  padding: .5rem;
+}
+
+.instructions {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.instructions-playtowin {
+  display: none;
+}
+
+.select {
+  padding: 1rem 2rem;
+  margin: 1rem 0;
+  border: 0;
+  border-radius: 5px;
+  background-color: #eceff4;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.classic {
+  background-color: #70a0af;
 }
 
 .alert {
@@ -61,6 +91,7 @@ h1 {
   border: 0;
   background-color: #ff686b;
   border-radius: 4px;
+  cursor: pointer;
 }
 
 .hover-x {
@@ -79,20 +110,6 @@ h1 {
   background-color: #ff686b;
 }
 
-
-.selects {
-  display: flex;
-  flex-direction: column;
-}
-
-.select {
-  padding: 1rem 2rem;
-  margin: 1rem;
-  border: 0;
-  border-radius: 5px;
-  background-color: #70a0af;
-  font-size: 1rem;
-}
 
 @media screen and (max-width: 860px) {
   body {
