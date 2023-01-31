@@ -90,13 +90,23 @@ const displayWin = () => {
     alert.prepend(img);
 }
 
+const displayTie = () => {
+    alert.style.display = "block";
+    img.setAttribute('src', 'cat.svg');
+    img.style.width = "200px";
+    p.innerHTML = "Cat's game!";
+    p.style.fontSize = "2rem";
+    alert.prepend(p);
+    alert.prepend(img);
+}
+
 // hover effects
 const addHover = (e) => {
-    player === "X" ? e.target.classList.add("hover-x") : e.target.classList.add("hover-o");
+    e.target.classList.add(`hover-${player}`);
 }
 
 const removeHover = (e) => {
-    player === "X" ? e.target.classList.remove("hover-x") : e.target.classList.remove("hover-o");
+    e.target.classList.remove(`hover-${player}`);
 }
 
 // play to win mode
@@ -133,108 +143,161 @@ selectPlayToWin.addEventListener('click', () => {
     selectMode("playToWin")
 })
 
-// rules after 3rd marker has been placed
-const newRules = () => {
-    for (let arraySquare of arraySquares){
-        arraySquare.addEventListener('click', () => {
-            console.log("new rules!");
-        })
+
+// the core of the game - both modes start out this way
+const playGame = (e) => {
+    console.log(`player is: ${player}`);
+    console.log(`we are in the classic rules`);
+    if (!win) {
+        let index = arraySquares.indexOf(e.target);
+        if (e.target.innerHTML === '') {
+            numPlays += 1;
+            player === "X" ? countX += 1 : countO += 1;
+
+            // setting the innerHTML and color styles
+            e.target.innerHTML = player;
+            e.target.classList.add(`selected-${player}`)
+
+            // remove hover effect for boxes already selected
+            if (e.target.classList.contains("selected-X") || e.target.classList.contains("selected-O")) {
+                e.target.removeEventListener('mouseenter', addHover)
+                e.target.removeEventListener('mouseleave', removeHover)
+            }
+
+            // change array to reflect status of game
+            const rowIndex = Math.floor(index / 3);
+            const colIndex = index % 3;
+            ticTacToe[rowIndex][colIndex] = player;
+
+            // create transposed version 
+            transposed[colIndex][rowIndex] = player;
+
+            // check if anyone has won
+            checkRow();
+            checkCol();
+            checkDiagonal();
+
+            // check if tie game
+            if (!win && numPlays == 9) {
+                displayTie();
+            }
+
+            // change player
+            player = (player === "X") ? "O" : "X"
+
+            // exit and change to new rules after 3rd play in Play to Win mode
+            if (mode === "playToWin" && !win) {
+                if (player === "X" && countX === 3 || player === "O" && countO === 3) {
+                    newRules();
+                }
+            }
+        }
     }
 }
+
 
 // the game
 for (let arraySquare of arraySquares) {
     arraySquare.addEventListener('mouseenter', addHover)
     arraySquare.addEventListener('mouseleave', removeHover)
-    console.log(`countX is: ${countX}`);           
+    arraySquare.addEventListener('click', playGame)
+}
 
-    arraySquare.addEventListener('click', () => {
-        console.log(`player is: ${player}`)
-        if (!win) {
-            console.log("click!")
-            let index = arraySquares.indexOf(arraySquare);
-            if (arraySquare.innerHTML === '') {
-                numPlays += 1;
-                player === "X" ? countX += 1 : countO += 1;
+let playerSquares = [];
+let emptySquares = [];
 
-                if (mode === "classic") {
-                    player === "X" ? arraySquare.innerHTML = "X" : arraySquare.innerHTML = "O";
-                    player === "X" ? arraySquare.classList.add("selected-x") : arraySquare.classList.add("selected-o");
-                }
-                if (mode === "playToWin") {
-                    if (player === "X") {
-                        if (countX <= 3) {
-                            arraySquare.innerHTML = "X";
-                            arraySquare.classList.add("selected-x");
-                        } else {
-                            console.log("please choose one of your Xs to move");
-                            arraySquare.style.border = "2px solid gold";
-                        }
-                    } else {
-                        if (countO <= 3) {
-                            arraySquare.innerHTML = "O";
-                            arraySquare.classList.add("selected-o");
-                        } else {
-                            console.log("please choose one of your Os to move");
-                        }
-                    }
-                }
+// rules after 3rd marker has been placed in Play to Win mode
+const newRules = (e) => {
+    console.log("we are in the new rules");
+    for (let arraySquare of arraySquares) {
+        arraySquare.removeEventListener('click', playGame)
+        arraySquare.removeEventListener('mouseenter', addHover)
+        arraySquare.removeEventListener('mouseleave', removeHover)
+    }
+    // highlight current player squares, add new event listeners to clear square
+    playerSquares = arraySquares.filter(arraySquare => arraySquare.innerHTML === player);
+    for (let playerSquare of playerSquares) {
+        playerSquare.classList.add("highlighted");
+        playerSquare.addEventListener('click', clearSquare);
+    }
+}
 
-                // remove hover effect for boxes already selected
-                if (arraySquare.classList.contains("selected-x") || arraySquare.classList.contains("selected-o")) {
-                    arraySquare.removeEventListener('mouseenter', addHover)
-                    arraySquare.removeEventListener('mouseleave', removeHover)
-                }
+let oldSquare;
 
-                // change array to reflect status of game
-                const rowIndex = Math.floor(index / 3);
-                const colIndex = index % 3;
-                ticTacToe[rowIndex][colIndex] = player;
+const clearSquare = (e) => {
+    // e.target.innerHTML = '';
+    console.log("clearing square")
+    e.target.classList.remove(`selected-${player}`);
+    e.target.classList.remove(`hover-${player}`);
+    e.target.classList.add("inactive");
+    oldSquare = e.target;
 
-                // create transposed version 
-                transposed[colIndex][rowIndex] = player;
+    playerSquares = arraySquares.filter(arraySquare => arraySquare.innerHTML === player);
 
-                // check if anyone has won
-                checkRow();
-                checkCol();
-                checkDiagonal();
+    emptySquares = arraySquares.filter(arraySquare => arraySquare.innerHTML === '');
+    for (emptySquare of emptySquares) {
+        emptySquare.classList.add("highlighted");
+        emptySquare.addEventListener('mouseenter', addHover)
+        emptySquare.addEventListener('mouseleave', removeHover)
+        emptySquare.addEventListener('click', selectNew)
+    }
+    for (let playerSquare of playerSquares) {
+        playerSquare.classList.remove("highlighted");
+        playerSquare.removeEventListener('click', clearSquare);
+    }
+    e.target.classList.remove("highlighted");
+    e.target.innerHTML = '';
 
-                // play to win mode?
-                if (countX === 3) {
-                    console.log("max moves for player X!")
-                }
-                if (countO === 3) {
-                    console.log("max moves for player O!")
-                }
+    // e.target.removeEventListener('click', selectNew)
+}
+
+const selectNew = (e) => {
+    console.log("selecting new square");
+    // updating styles
+    e.target.innerHTML = player;
+    e.target.classList.add(`selected-${player}`);
+    oldSquare.classList.remove("inactive");
+
+    // update the matrix to reflect status of game
+    let index = arraySquares.indexOf(e.target);
+    let rowIndex = Math.floor(index / 3);
+    let colIndex = index % 3;
+    ticTacToe[rowIndex][colIndex] = player;
+    index = arraySquares.indexOf(oldSquare);
+    rowIndex = Math.floor(index / 3);
+    colIndex = index % 3;
+    ticTacToe[rowIndex][colIndex] = '';
+
+    // removing hightlights
+    emptySquares = arraySquares.filter(arraySquare => arraySquare.innerHTML === '');
+    for (emptySquare of emptySquares) {
+        emptySquare.classList.remove("highlighted");
+        emptySquare.removeEventListener('click', selectNew)
+        emptySquare.removeEventListener('mouseenter', addHover)
+        emptySquare.removeEventListener('mouseleave', removeHover)
+    }
+    e.target.classList.remove("highlighted");
+    e.target.removeEventListener('click', selectNew)
+    e.target.removeEventListener('mouseenter', addHover)
+    e.target.removeEventListener('mouseleave', removeHover)
 
 
-                // check if tie game
-                if (!win && numPlays == 9) {
-                    alert.style.display = "block";
-                    img.setAttribute('src', 'cat.svg');
-                    img.style.width = "200px";
-                    p.innerHTML = "Cat's game!";
-                    p.style.fontSize = "2rem";
-                    alert.prepend(p);
-                    alert.prepend(img);
-                }
+    // check if anyone has won
+    checkRow();
+    checkCol();
+    checkDiagonal();
 
-                // change player
-                player = (player === "X") ? "O" : "X"
+    // change player 
+    player = (player === "X") ? "O" : "X";
 
-                if (player === "X") {
-                    if (countX === 3) {
-                        console.log(`trigger new rules for ${player}`)  
-                        newRules();
-                     }
-                } else {
-                    if (countO === 3) {
-                        console.log(`trigger new rules for ${player}`)
-                    }
-                } 
-            }
-        }
-    })
+    // highlight current player squares, add new event listener to clear square
+    playerSquares = arraySquares.filter(arraySquare => arraySquare.innerHTML === player);
+    console.log(`playerSquares is: ${playerSquares}`)
+    for (let playerSquare of playerSquares) {
+        playerSquare.classList.add("highlighted");
+        playerSquare.addEventListener('click', clearSquare);
+    }
+
 }
 
 
@@ -244,10 +307,10 @@ const replayBtn = document.querySelector('.replay');
 replayBtn.addEventListener('click', () => {
     for (let arraySquare of arraySquares) {
         arraySquare.innerHTML = '';
-        arraySquare.classList.remove("selected-x");
-        arraySquare.classList.remove("selected-o");
-        arraySquare.classList.remove("hover-x");
-        arraySquare.classList.remove("hover-o");
+        arraySquare.classList.remove("selected-X");
+        arraySquare.classList.remove("selected-O");
+        arraySquare.classList.remove("hover-X");
+        arraySquare.classList.remove("hover-O");
         arraySquare.addEventListener('mouseenter', addHover)
         arraySquare.addEventListener('mouseleave', removeHover)
     }

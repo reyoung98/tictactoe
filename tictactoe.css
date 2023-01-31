@@ -94,20 +94,28 @@ h1 {
   cursor: pointer;
 }
 
-.hover-x {
+.hover-X {
   background-color: #706993aa;
 }
 
-.hover-o {
+.hover-O {
   background-color: #ff686baa;
 }
 
-.selected-x {
+.selected-X {
   background-color: #706993;
 }
 
-.selected-o {
+.selected-O {
   background-color: #ff686b;
+}
+
+.inactive {
+  background-color: lightgray;
+}
+
+.highlighted {
+  box-shadow: 0 0 10px 5px gold;
 }
 
 
