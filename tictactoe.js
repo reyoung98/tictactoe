@@ -18,101 +18,11 @@ let win = false;
 let numPlays = 0;
 let mode = "classic";
 
-// check if winner in row
-const checkRow = () => {
-    for (let row of ticTacToe) {
-        for (let value of row) {
-            if (value !== '' && row[0] === row[1] && row[1] === row[2]) {
-                win = true;
-            }
-        }
-    }
-    if (win) {
-        displayWin()
-    }
-}
-
-// check if winner in column
-const checkCol = () => {
-    for (let row of transposed) {
-        for (let value of row) {
-            if (value !== '' && row[0] === row[1] && row[1] === row[2]) {
-                win = true;
-            }
-        }
-    }
-    if (win) {
-        displayWin()
-    }
-}
-
-// check if winner in diagonal
-const checkDiagonal = () => {
-    let diagonalVals = [];
-    let diagonalVals2 = [];
-    for (let i = 0; i < 3; i++) {
-
-        // check first diagonal
-        let diagonalVal = ticTacToe[i][i];
-        diagonalVals.push(diagonalVal);
-        // console.log(diagonalVals);
-        if (diagonalVal !== '' && diagonalVals[0] === diagonalVals[1] && diagonalVals[1] === diagonalVals[2]) {
-            win = true;
-        }
-
-        // check second diagonal
-        let diagonalVal2 = ticTacToe[i][2 - i];
-        diagonalVals2.push(diagonalVal2);
-        // console.log(diagonalVals2);
-        if (diagonalVal2 !== '' && diagonalVals2[0] === diagonalVals2[1] && diagonalVals2[1] === diagonalVals2[2]) {
-            win = true;
-        }
-        if (win) {
-            displayWin()
-        }
-    }
-    diagonalVals = [];
-    diagonalVals2 = [];
-}
-
-// when game is over
-const alert = document.querySelector('.alert');
-p = document.createElement('p');
-const img = document.createElement('img');
-
-const displayWin = () => {
-    alert.style.display = "block";
-    p.innerHTML = `${player} wins!`;
-    p.style.fontSize = "2rem"
-    player === "X" ? img.setAttribute('src', 'happy.svg') : img.setAttribute('src', 'party.svg');
-    img.style.width = "200px";
-    alert.prepend(p);
-    alert.prepend(img);
-}
-
-const displayTie = () => {
-    alert.style.display = "block";
-    img.setAttribute('src', 'cat.svg');
-    img.style.width = "200px";
-    p.innerHTML = "Cat's game!";
-    p.style.fontSize = "2rem";
-    alert.prepend(p);
-    alert.prepend(img);
-}
-
-// hover effects
-const addHover = (e) => {
-    e.target.classList.add(`hover-${player}`);
-}
-
-const removeHover = (e) => {
-    e.target.classList.remove(`hover-${player}`);
-}
-
-// play to win mode
+// variables for play to win mode
 let countX = 0;
 let countO = 0;
 
+// buttons to select game mode
 const selectClassic = document.querySelector('.classic');
 const selectPlayToWin = document.querySelector('.play-to-win');
 const instructionsClassic = document.querySelector('.instructions-classic');
@@ -122,17 +32,17 @@ const selectMode = (setMode) => {
     if (setMode === "classic") {
         mode = "classic";
         console.log(`mode is ${mode}`)
-        selectClassic.style.backgroundColor = "#70a0af";
-        selectPlayToWin.style.backgroundColor = "#eceff4";
-        instructionsPlayToWin.style.display = "none";
-        instructionsClassic.style.display = "block";
+        selectClassic.classList.add("selected-mode")
+        selectPlayToWin.classList.remove("selected-mode")
+        instructionsClassic.classList.remove("hide")
+        instructionsPlayToWin.classList.add("hide")
     } else {
         mode = "playToWin";
         console.log(`mode is ${mode}`)
-        selectPlayToWin.style.backgroundColor = "#70a0af";
-        selectClassic.style.backgroundColor = "#eceff4";
-        instructionsPlayToWin.style.display = "block";
-        instructionsClassic.style.display = "none";
+        selectPlayToWin.classList.add("selected-mode")
+        selectClassic.classList.remove("selected-mode")
+        instructionsPlayToWin.classList.remove("hide")
+        instructionsClassic.classList.add("hide")
     }
 }
 
@@ -143,6 +53,15 @@ selectPlayToWin.addEventListener('click', () => {
     selectMode("playToWin")
 })
 
+
+// hover effects
+const addHover = (e) => {
+    e.target.classList.add(`hover-${player}`);
+}
+
+const removeHover = (e) => {
+    e.target.classList.remove(`hover-${player}`);
+}
 
 // the core of the game - both modes start out this way
 const playGame = (e) => {
@@ -173,13 +92,11 @@ const playGame = (e) => {
             transposed[colIndex][rowIndex] = player;
 
             // check if anyone has won
-            checkRow();
-            checkCol();
-            checkDiagonal();
+            checkWin();
 
             // check if tie game
             if (!win && numPlays == 9) {
-                displayTie();
+                displayAlert("tie");
             }
 
             // change player
@@ -195,18 +112,17 @@ const playGame = (e) => {
     }
 }
 
-
-// the game
+// initiate the game
 for (let arraySquare of arraySquares) {
     arraySquare.addEventListener('mouseenter', addHover)
     arraySquare.addEventListener('mouseleave', removeHover)
     arraySquare.addEventListener('click', playGame)
 }
 
+// new rules after 3rd marker has been placed in Play to Win mode
 let playerSquares = [];
 let emptySquares = [];
 
-// rules after 3rd marker has been placed in Play to Win mode
 const newRules = (e) => {
     console.log("we are in the new rules");
     for (let arraySquare of arraySquares) {
@@ -222,10 +138,10 @@ const newRules = (e) => {
     }
 }
 
+// player clicks square to clear it
 let oldSquare;
 
 const clearSquare = (e) => {
-    // e.target.innerHTML = '';
     console.log("clearing square")
     e.target.classList.remove(`selected-${player}`);
     e.target.classList.remove(`hover-${player}`);
@@ -247,10 +163,9 @@ const clearSquare = (e) => {
     }
     e.target.classList.remove("highlighted");
     e.target.innerHTML = '';
-
-    // e.target.removeEventListener('click', selectNew)
 }
 
+// player clicks new square to select it
 const selectNew = (e) => {
     console.log("selecting new square");
     // updating styles
@@ -278,28 +193,129 @@ const selectNew = (e) => {
     }
     e.target.classList.remove("highlighted");
     e.target.removeEventListener('click', selectNew)
+    e.target.removeEventListener('click', clearSquare)
     e.target.removeEventListener('mouseenter', addHover)
     e.target.removeEventListener('mouseleave', removeHover)
 
 
     // check if anyone has won
+    checkWin();
+
+    if (!win) {
+
+        // change player 
+        player = (player === "X") ? "O" : "X";
+
+        // highlight current player squares, add new event listener to clear square
+        playerSquares = arraySquares.filter(arraySquare => arraySquare.innerHTML === player);
+        console.log(`playerSquares is: ${playerSquares}`)
+        for (let playerSquare of playerSquares) {
+            playerSquare.classList.add("highlighted");
+            playerSquare.addEventListener('click', clearSquare);
+        }
+    }
+}
+
+// check all win possibilities
+const checkWin = () => {
     checkRow();
     checkCol();
     checkDiagonal();
-
-    // change player 
-    player = (player === "X") ? "O" : "X";
-
-    // highlight current player squares, add new event listener to clear square
-    playerSquares = arraySquares.filter(arraySquare => arraySquare.innerHTML === player);
-    console.log(`playerSquares is: ${playerSquares}`)
-    for (let playerSquare of playerSquares) {
-        playerSquare.classList.add("highlighted");
-        playerSquare.addEventListener('click', clearSquare);
-    }
-
 }
 
+// check if winner in row
+const checkRow = () => {
+    for (let row of ticTacToe) {
+        for (let value of row) {
+            if (value !== '' && row[0] === row[1] && row[1] === row[2]) {
+                win = true;
+            }
+        }
+    }
+    if (win) {
+        displayAlert("win")
+    }
+}
+
+// check if winner in column
+const checkCol = () => {
+    for (let row of transposed) {
+        for (let value of row) {
+            if (value !== '' && row[0] === row[1] && row[1] === row[2]) {
+                win = true;
+            }
+        }
+    }
+    if (win) {
+        displayAlert("win")
+    }
+}
+
+// check if winner in diagonal
+const checkDiagonal = () => {
+    let diagonalVals = [];
+    let diagonalVals2 = [];
+    for (let i = 0; i < 3; i++) {
+
+        // check first diagonal
+        let diagonalVal = ticTacToe[i][i];
+        diagonalVals.push(diagonalVal);
+        // console.log(diagonalVals);
+        if (diagonalVal !== '' && diagonalVals[0] === diagonalVals[1] && diagonalVals[1] === diagonalVals[2]) {
+            win = true;
+        }
+
+        // check second diagonal
+        let diagonalVal2 = ticTacToe[i][2 - i];
+        diagonalVals2.push(diagonalVal2);
+        // console.log(diagonalVals2);
+        if (diagonalVal2 !== '' && diagonalVals2[0] === diagonalVals2[1] && diagonalVals2[1] === diagonalVals2[2]) {
+            win = true;
+        }
+        if (win) {
+            displayAlert("win")
+        }
+    }
+    diagonalVals = [];
+    diagonalVals2 = [];
+}
+
+// when game is over
+const alert = document.querySelector('.alert');
+p = document.createElement('p');
+const img = document.createElement('img');
+
+const displayAlert = (result) => {
+    alert.classList.add("alert-visible");
+    switch (result) {
+        case "win":
+            p.innerHTML = `${player} wins!`;
+            player === "X" ? img.setAttribute('src', 'happy.svg') : img.setAttribute('src', 'party.svg');
+            break;
+        case "tie":
+            img.setAttribute('src', 'cat.svg');
+            p.innerHTML = "Cat's game!";
+            break;
+    }
+    alert.prepend(p);
+    alert.prepend(img);
+}
+
+// const displayWin = () => {
+//     alert.classList.add("alert-visible");
+//     p.innerHTML = `${player} wins!`;
+//     player === "X" ? img.setAttribute('src', 'happy.svg') : img.setAttribute('src', 'party.svg');
+//     alert.prepend(p);
+//     alert.prepend(img);
+// }
+
+// const displayTie = () => {
+//     alert.classList.add("alert-visible");
+//     img.setAttribute('src', 'cat.svg');
+//     p.innerHTML = "Cat's game!";
+//     alert.prepend(p);
+//     alert.prepend(img);
+// }
 
 // reset the game
 const replayBtn = document.querySelector('.replay');
@@ -311,10 +327,12 @@ replayBtn.addEventListener('click', () => {
         arraySquare.classList.remove("selected-O");
         arraySquare.classList.remove("hover-X");
         arraySquare.classList.remove("hover-O");
-        arraySquare.addEventListener('mouseenter', addHover)
-        arraySquare.addEventListener('mouseleave', removeHover)
+        arraySquare.classList.remove("highlighted");
+        arraySquare.addEventListener('mouseenter', addHover);
+        arraySquare.addEventListener('mouseleave', removeHover);
+        arraySquare.addEventListener('click', playGame)
     }
-    alert.style.display = "none";
+    alert.classList.remove("alert-visible");
     win = false;
     numPlays = 0;
     countX = 0;
