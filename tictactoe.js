@@ -18,9 +18,9 @@ let win = false;
 let numPlays = 0;
 let mode = "classic";
 
-// variables for play to win mode
-let countX = 0;
-let countO = 0;
+// // variables for play to win mode
+// let countX = 0;
+// let countO = 0;
 
 // buttons to select game mode
 const selectClassic = document.querySelector('.classic');
@@ -71,7 +71,7 @@ const playGame = (e) => {
         let index = arraySquares.indexOf(e.target);
         if (e.target.innerHTML === '') {
             numPlays += 1;
-            player === "X" ? countX += 1 : countO += 1;
+            // player === "X" ? countX += 1 : countO += 1;
 
             // setting the innerHTML and color styles
             e.target.innerHTML = player;
@@ -103,10 +103,8 @@ const playGame = (e) => {
             player = (player === "X") ? "O" : "X"
 
             // exit and change to new rules after 3rd play in Play to Win mode
-            if (mode === "playToWin" && !win) {
-                if (player === "X" && countX === 3 || player === "O" && countO === 3) {
-                    newRules();
-                }
+            if (mode === "playToWin" && !win && numPlays === 6) {
+                newRules();
             }
         }
     }
@@ -204,11 +202,12 @@ const selectNew = (e) => {
     if (!win) {
 
         // change player 
+        console.log("changing player...")
         player = (player === "X") ? "O" : "X";
+        console.log(`player is: ${player}`)
 
         // highlight current player squares, add new event listener to clear square
         playerSquares = arraySquares.filter(arraySquare => arraySquare.innerHTML === player);
-        console.log(`playerSquares is: ${playerSquares}`)
         for (let playerSquare of playerSquares) {
             playerSquare.classList.add("highlighted");
             playerSquare.addEventListener('click', clearSquare);
@@ -273,6 +272,9 @@ const checkDiagonal = () => {
             win = true;
         }
         if (win) {
+            // const alertWin = new Alert('win', player);
+            // alertWin.display();
+
             displayAlert("win")
         }
     }
@@ -301,22 +303,6 @@ const displayAlert = (result) => {
     alert.prepend(img);
 }
 
-// const displayWin = () => {
-//     alert.classList.add("alert-visible");
-//     p.innerHTML = `${player} wins!`;
-//     player === "X" ? img.setAttribute('src', 'happy.svg') : img.setAttribute('src', 'party.svg');
-//     alert.prepend(p);
-//     alert.prepend(img);
-// }
-
-// const displayTie = () => {
-//     alert.classList.add("alert-visible");
-//     img.setAttribute('src', 'cat.svg');
-//     p.innerHTML = "Cat's game!";
-//     alert.prepend(p);
-//     alert.prepend(img);
-// }
-
 // reset the game
 const replayBtn = document.querySelector('.replay');
 
@@ -335,8 +321,6 @@ replayBtn.addEventListener('click', () => {
     alert.classList.remove("alert-visible");
     win = false;
     numPlays = 0;
-    countX = 0;
-    countO = 0;
 
     for (i = 0; i < 3; i++) {
         for (j = 0; j < 3; j++) {
@@ -345,6 +329,22 @@ replayBtn.addEventListener('click', () => {
         }
     }
 })
+
+// const displayWin = () => {
+//     alert.classList.add("alert-visible");
+//     p.innerHTML = `${player} wins!`;
+//     player === "X" ? img.setAttribute('src', 'happy.svg') : img.setAttribute('src', 'party.svg');
+//     alert.prepend(p);
+//     alert.prepend(img);
+// }
+
+// const displayTie = () => {
+//     alert.classList.add("alert-visible");
+//     img.setAttribute('src', 'cat.svg');
+//     p.innerHTML = "Cat's game!";
+//     alert.prepend(p);
+//     alert.prepend(img);
+// }
 
 
 
