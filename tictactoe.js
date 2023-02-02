@@ -40,6 +40,7 @@ const selectMode = (setMode) => {
         instructionsPlayToWin.classList.remove("hide")
         instructionsClassic.classList.add("hide")
     }
+    resetGame();
 }
 
 selectClassic.addEventListener('click', () => {
@@ -176,6 +177,7 @@ const selectNew = (e) => {
     rowIndex = Math.floor(index / 3);
     colIndex = index % 3;
     ticTacToe[rowIndex][colIndex] = '';
+    transposed[colIndex][rowIndex] = '';
 
     // removing hightlights
     emptySquares = arraySquares.filter(arraySquare => arraySquare.innerHTML === '');
@@ -301,7 +303,9 @@ const displayAlert = (result) => {
 // reset the game
 const replayBtn = document.querySelector('.replay');
 
-replayBtn.addEventListener('click', () => {
+replayBtn.addEventListener('click', resetGame)
+
+function resetGame() {
     for (let arraySquare of arraySquares) {
         arraySquare.innerHTML = '';
         arraySquare.classList.remove("selected-X");
@@ -323,7 +327,7 @@ replayBtn.addEventListener('click', () => {
             transposed[i][j] = '';
         }
     }
-})
+}
 
 // const displayWin = () => {
 //     alert.classList.add("alert-visible");
