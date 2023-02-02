@@ -18,10 +18,6 @@ let win = false;
 let numPlays = 0;
 let mode = "classic";
 
-// // variables for play to win mode
-// let countX = 0;
-// let countO = 0;
-
 // buttons to select game mode
 const selectClassic = document.querySelector('.classic');
 const selectPlayToWin = document.querySelector('.play-to-win');
@@ -71,7 +67,6 @@ const playGame = (e) => {
         let index = arraySquares.indexOf(e.target);
         if (e.target.innerHTML === '') {
             numPlays += 1;
-            // player === "X" ? countX += 1 : countO += 1;
 
             // setting the innerHTML and color styles
             e.target.innerHTML = player;
@@ -274,7 +269,6 @@ const checkDiagonal = () => {
         }
         if (win) {
             // const alertWin = new Alert('win', player);
-            // alertWin.display();
 
             displayAlert("win")
         }
