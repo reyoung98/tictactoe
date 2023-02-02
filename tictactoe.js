@@ -176,6 +176,7 @@ const selectNew = (e) => {
     let rowIndex = Math.floor(index / 3);
     let colIndex = index % 3;
     ticTacToe[rowIndex][colIndex] = player;
+    transposed[colIndex][rowIndex] = player;
     index = arraySquares.indexOf(oldSquare);
     rowIndex = Math.floor(index / 3);
     colIndex = index % 3;
