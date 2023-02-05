@@ -218,6 +218,10 @@ const checkWin = () => {
     checkRow();
     checkCol();
     checkDiagonal();
+
+    if (win) {
+        displayAlert("win")
+    }
 }
 
 // check if winner in row
@@ -229,9 +233,6 @@ const checkRow = () => {
             }
         }
     }
-    if (win) {
-        displayAlert("win")
-    }
 }
 
 // check if winner in column
@@ -242,9 +243,6 @@ const checkCol = () => {
                 win = true;
             }
         }
-    }
-    if (win) {
-        displayAlert("win")
     }
 }
 
@@ -268,11 +266,6 @@ const checkDiagonal = () => {
         // console.log(diagonalVals2);
         if (diagonalVal2 !== '' && diagonalVals2[0] === diagonalVals2[1] && diagonalVals2[1] === diagonalVals2[2]) {
             win = true;
-        }
-        if (win) {
-            // const alertWin = new Alert('win', player);
-
-            displayAlert("win")
         }
     }
     diagonalVals = [];
@@ -328,22 +321,6 @@ function resetGame() {
         }
     }
 }
-
-// const displayWin = () => {
-//     alert.classList.add("alert-visible");
-//     p.innerHTML = `${player} wins!`;
-//     player === "X" ? img.setAttribute('src', 'happy.svg') : img.setAttribute('src', 'party.svg');
-//     alert.prepend(p);
-//     alert.prepend(img);
-// }
-
-// const displayTie = () => {
-//     alert.classList.add("alert-visible");
-//     img.setAttribute('src', 'cat.svg');
-//     p.innerHTML = "Cat's game!";
-//     alert.prepend(p);
-//     alert.prepend(img);
-// }
 
 
 
