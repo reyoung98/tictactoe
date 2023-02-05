@@ -145,7 +145,7 @@ const clearSquare = (e) => {
     playerSquares = arraySquares.filter(arraySquare => arraySquare.innerHTML === player);
 
     emptySquares = arraySquares.filter(arraySquare => arraySquare.innerHTML === '');
-    for (emptySquare of emptySquares) {
+    for (let emptySquare of emptySquares) {
         emptySquare.classList.add("highlighted");
         emptySquare.addEventListener('mouseenter', addHover)
         emptySquare.addEventListener('mouseleave', removeHover)
@@ -181,7 +181,7 @@ const selectNew = (e) => {
 
     // removing hightlights
     emptySquares = arraySquares.filter(arraySquare => arraySquare.innerHTML === '');
-    for (emptySquare of emptySquares) {
+    for (let emptySquare of emptySquares) {
         emptySquare.classList.remove("highlighted");
         emptySquare.removeEventListener('click', selectNew)
         emptySquare.removeEventListener('mouseenter', addHover)
